@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import json
 import os
@@ -17,12 +18,26 @@ class PlayerScraper():
         '''
 
         def __init__(self, url = 'https://www.icc-cricket.com/homepage'):
+
                 
-                self.driver = webdriver.Chrome()
+                
+                self.driver = webdriver.Chrome(ChromeDriverManager().install(), options= self.__options())
                 self.driver.get(url)
                 time.sleep(2)
                 self.find_correct_page()
-                time.sleep(2)
+                
+
+        def __options(self):
+                chrome_options = Options()
+                chrome_options.add_argument("--start-maximized")
+                chrome_options.add_argument("--window-size=1920,1080")
+                chrome_options.add_argument("--disable-notifications")
+                chrome_options.add_argument('no-sandbox') 
+                chrome_options.add_argument("--headless")
+                chrome_options.add_argument("disable-dev-shm-usage")
+                chrome_options.add_argument("--disable-setuid-sandbox") 
+                chrome_options.add_argument('--disable-gpu')
+                return chrome_options
 
 
 
@@ -106,7 +121,7 @@ class PlayerScraper():
 
 class DataScraper(PlayerScraper):
        
-    def __init__(self, url = 'https://www.icc-cricket.com/homepage'):
+        def __init__(self, url = 'https://www.icc-cricket.com/homepage'):
                 super().__init__()
 
                 '''
@@ -117,204 +132,207 @@ class DataScraper(PlayerScraper):
                 '''
                 
 
-    def scrape_stats(self, role , container):
+        def scrape_stats(self, role , container):
 
-        '''
-        This function scrapes test match stats from the player profile and returns in as a dictionary.
-        The container is a variable because it allows this function to be used for batter, bowling, and all-rounder stats.
-        
-        '''
-
-        stat_dict = {
-        f"Latest {role} Ranking": " ",
-        f"Latest {role} Rating": " ",
-        
-        f"Highest {role} Ranking": " ",
-        f"Date achieved of highest {role} ranking": " ",
-
-        f"Highest {role} Rating": " ",
-        f"Data achieved of highest {role} rating" : " "
-        }
-
-
-        latest_bat_rank = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number rankings-player-stats__rankings-number--large"]')[0].text    
-        latest_bat_rating = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number"]')[0].text
-        
-        
-        highest_bat_rank = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number rankings-player-stats__rankings-number--large"]')[1].text
-        ranking_date_achieved = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-label rankings-player-stats__rankings-label--date"]')[0].text
-
-        highest_bat_rating = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number"]')[1].text
-        rating_date_achieved = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-label rankings-player-stats__rankings-label--date"]')[1].text
-
-
-
-        stat_dict.update(
-                {f"Latest {role} Ranking": latest_bat_rank,
-
-                f"Latest {role} Rating": latest_bat_rating, 
-
-                f"Highest {role} Ranking": highest_bat_rank,
-                f"Date Achieved of Highest {role} Ranking": ranking_date_achieved,
+                '''
+                This function scrapes test match stats from the player profile and returns in as a dictionary.
+                The container is a variable because it allows this function to be used for batter, bowling, and all-rounder stats.
                 
-                f"Highest {role} Rating" : highest_bat_rating,
-                f"Data Achieved of Highest {role} Rating" : rating_date_achieved}
-                )
+                '''
+
+                stat_dict = {
+                f"Latest {role} Ranking": " ",
+                f"Latest {role} Rating": " ",
+                
+                f"Highest {role} Ranking": " ",
+                f"Date achieved of highest {role} ranking": " ",
+
+                f"Highest {role} Rating": " ",
+                f"Data achieved of highest {role} rating" : " "
+                }
+
+
+                latest_bat_rank = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number rankings-player-stats__rankings-number--large"]')[0].text    
+                latest_bat_rating = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number"]')[0].text
+                
+                
+                highest_bat_rank = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number rankings-player-stats__rankings-number--large"]')[1].text
+                ranking_date_achieved = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-label rankings-player-stats__rankings-label--date"]')[0].text
+
+                highest_bat_rating = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-number"]')[1].text
+                rating_date_achieved = container.find_elements(By.XPATH, './/div[@class="rankings-player-stats__rankings-label rankings-player-stats__rankings-label--date"]')[1].text
 
 
 
-        return stat_dict
+                stat_dict.update(
+                        {f"Latest {role} Ranking": latest_bat_rank,
+
+                        f"Latest {role} Rating": latest_bat_rating, 
+
+                        f"Highest {role} Ranking": highest_bat_rank,
+                        f"Date Achieved of Highest {role} Ranking": ranking_date_achieved,
+                        
+                        f"Highest {role} Rating" : highest_bat_rating,
+                        f"Data Achieved of Highest {role} Rating" : rating_date_achieved}
+                        )
 
 
-    def get_bat_stats(self):
-        '''
-        
-        The next three functions defines the container for batting, bowling and alll-rounder stats.
-        It then calls the scrape_stats function with the respective container as a variable, the position which is used in the dictionary that is return.
-        '''
-        bat_container = self.driver.find_elements(By.XPATH, '//div[@class="rankings-player-stats__type-wrapper js-ranking-container"]')[0]
-        return self.scrape_stats("Batting", bat_container)
+
+                return stat_dict
 
 
-    def get_bowl_stats(self):
-        bowl_container = self.driver.find_elements(By.XPATH, '//div[@class="rankings-player-stats__type-wrapper js-ranking-container"]')[1]
-        return self.scrape_stats("Bowling", bowl_container)
+        def get_bat_stats(self):
+                '''
+                
+                The next three functions defines the container for batting, bowling and alll-rounder stats.
+                It then calls the scrape_stats function with the respective container as a variable, the position which is used in the dictionary that is return.
+                '''
+                bat_container = self.driver.find_elements(By.XPATH, '//div[@class="rankings-player-stats__type-wrapper js-ranking-container"]')[0]
+                return self.scrape_stats("Batting", bat_container)
 
-    def get_all_round_stats(self):
-        all_round_container = self.driver.find_elements(By.XPATH, '//div[@class="rankings-player-stats__type-wrapper js-ranking-container"]')[2]
-        return self.scrape_stats("All-Rounder", all_round_container)
+
+        def get_bowl_stats(self):
+                bowl_container = self.driver.find_elements(By.XPATH, '//div[@class="rankings-player-stats__type-wrapper js-ranking-container"]')[1]
+                return self.scrape_stats("Bowling", bowl_container)
+
+        def get_all_round_stats(self):
+                all_round_container = self.driver.find_elements(By.XPATH, '//div[@class="rankings-player-stats__type-wrapper js-ranking-container"]')[2]
+                return self.scrape_stats("All-Rounder", all_round_container)
 
 
-    def get_current_batters_info(self):
+        def get_current_batters_info(self):
 
-        '''
-        The next 3 functions call the other functions that scrape the states, convert them to a dictionary and dumps into another folder.
-        '''
-        current_batter_links = self.current_batters()
+                '''
+                The next 3 functions call the other functions that scrape the states, convert them to a dictionary and dumps into another folder.
+                '''
+                current_batter_links = self.current_batters()
 
-        #checks if folders for the stats and images are created. If not it creates them.
-        current_batting_folder = "current-batting-rankings"
-        Path(f"data/rankings/{current_batting_folder}").mkdir(parents=True, exist_ok=True)
+                #checks if folders for the stats and images are created. If not it creates them.
+                current_batting_folder = "current-batting-rankings"
+                Path(f"data/rankings/{current_batting_folder}").mkdir(parents=True, exist_ok=True)
 
-        current_batting_image_folder = "current-batting-images"
-        Path(f"data/images/{current_batting_image_folder}").mkdir(parents=True, exist_ok=True)
+                current_batting_image_folder = "current-batting-images"
+                Path(f"data/images/{current_batting_image_folder}").mkdir(parents=True, exist_ok=True)
 
-        
+                
 
-        for bat_links in current_batter_links[:5]:
-                        self.driver.get(bat_links)
+                for bat_links in current_batter_links[:5]:
+                                self.driver.get(bat_links)
+                                time.sleep(2)
+                                batters_batting_stats = self.get_bat_stats()
+                                batters_bowling_stats = self.get_bowl_stats()
+                                batters_all_round_stats = self.get_all_round_stats()
+                                self.writing_up_data(current_batting_folder, batters_batting_stats, batters_bowling_stats, batters_all_round_stats)
+                                self.image_scraper(current_batting_image_folder)
+                                break
+                                
+                self.back_to_original_page()
+                #back to original page so the next player role rankings can be scraped
+
+
+
+        def get_current_bowlers_info(self):
+                current_bowl_links = self.current_bowlers()
+
+
+                current_bowling_folder = "current-bowling-rankings"
+                Path(f"data/rankings/{current_bowling_folder}").mkdir(parents=True, exist_ok=True)
+
+
+                current_bowling_image_folder = "current-bowling-images"
+                Path(f"data/images/{current_bowling_image_folder}").mkdir(parents=True, exist_ok=True)
+
+
+                #creates folders for images and rankings for bowlers
+
+
+                for bowl_links in current_bowl_links[:5]:
+                        self.driver.get(bowl_links)
                         time.sleep(2)
-                        batters_batting_stats = self.get_bat_stats()
-                        batters_bowling_stats = self.get_bowl_stats()
-                        batters_all_round_stats = self.get_all_round_stats()
-                        self.writing_up_data(current_batting_folder, batters_batting_stats, batters_bowling_stats, batters_all_round_stats)
-                        self.image_scraper(current_batting_image_folder)
+                        bowlers_batting_stats = self.get_bat_stats()
+                        bowlers_bowling_stats = self.get_bowl_stats()
+                        bowlers_all_round_stats = self.get_all_round_stats()
+                        self.writing_up_data(current_bowling_folder, bowlers_batting_stats, bowlers_bowling_stats, bowlers_all_round_stats)
+                        self.image_scraper(current_bowling_image_folder)
+                        break
                         
-        self.back_to_original_page()
-        #back to original page so the next player role rankings can be scraped
+                self.back_to_original_page()
 
 
-
-    def get_current_bowlers_info(self):
-            current_bowl_links = self.current_bowlers()
-
-
-            current_bowling_folder = "current-bowling-rankings"
-            Path(f"data/rankings/{current_bowling_folder}").mkdir(parents=True, exist_ok=True)
-
-
-            current_bowling_image_folder = "current-bowling-images"
-            Path(f"data/images/{current_bowling_image_folder}").mkdir(parents=True, exist_ok=True)
-
-
-            #creates folders for images and rankings for bowlers
-
-
-            for bowl_links in current_bowl_links[:5]:
-                    self.driver.get(bowl_links)
-                    time.sleep(2)
-                    bowlers_batting_stats = self.get_bat_stats()
-                    bowlers_bowling_stats = self.get_bowl_stats()
-                    bowlers_all_round_stats = self.get_all_round_stats()
-                    self.writing_up_data(current_bowling_folder, bowlers_batting_stats, bowlers_bowling_stats, bowlers_all_round_stats)
-                    self.image_scraper(current_bowling_image_folder)
-                    
-            self.back_to_original_page()
-
-
-    def get_current_all_rounder_info(self):
-            
-            current_all_rounder_links = self.current_all_rounder()
-
-            current_all_rounder_folder = "current-all-rounder-rankings"
-            Path(f"data/rankings/{current_all_rounder_folder}").mkdir(parents=True, exist_ok=True)
-
-
-            current_all_rounder_image_folder = "current-all-rounder-images"
-            Path(f"data/images/{current_all_rounder_image_folder}").mkdir(parents=True, exist_ok=True)
-
-            #creates folders for images and rankings for all-rounders
-
-
-
-            for all_round_links in current_all_rounder_links[:5]:
-                    self.driver.get(all_round_links)
-                    time.sleep(2)
-                    all_rounder_batting_stats = self.get_bat_stats()
-                    all_rounder_bowling_stats = self.get_bowl_stats()
-                    all_rounder_all_round_stats = self.get_all_round_stats()
-                    self.writing_up_data(current_all_rounder_folder, all_rounder_batting_stats, all_rounder_bowling_stats, all_rounder_all_round_stats)
-                    self.image_scraper(current_all_rounder_image_folder)
-
-            self.back_to_original_page()
-
-
-
-    def writing_up_data(self, folder, bat, bowl, all_round):
-
-                    '''
-                    This method dumps the stats in a dictionary in a json file.
-                    It takes the folder as variable so it can be put in the batting, bowling, or all-rounder folder.
-                    
-                    '''
-
-    
-
-                    #player name is scraped for the title of the json file.
-                    player_name = self.driver.find_element(By.XPATH, '//h2[@class="rankings-player-bio__name"]').text.lower().replace(' ', '-')
-                    filename = os.path.join(f"data/rankings/{folder}/" f"{player_name}.json")
-                    #folder is called in the get_{player_role}_info functions
-
-                    with open( filename, 'w') as file:
-
-                        file.write("Test Batting Stats \n\n")
-                        json.dump( bat, file, indent=4)
-                        file.write("\n\nTest Bowling Stats \n\n")
-                        json.dump (bowl, file, indent=4)
-                        file.write("\n\nTest All Rounder Stats\n\n")
-                        json.dump(all_round, file, indent=4)
-                        #indent =4 separates each key value pair on different lines
-                        
-                            
-
-
-    def image_scraper(self, image_folder):
-
-                '''
+        def get_current_all_rounder_info(self):
                 
-                The last two methods scrape the image from the player profile.
-                And then put it into the respecitive file.
-                '''
-                image = self.driver.find_element(By.XPATH, '//img[@class="rankings-player-bio__player-image"]')
-                img_src = image.get_attribute('src')
-                player_name = self.driver.find_element(By.XPATH, '//h2[@class="rankings-player-bio__name"]').text.lower().replace(' ', '-')
+                current_all_rounder_links = self.current_all_rounder()
 
-                self.download_img(img_src, f"data/images/{image_folder}/{player_name}.jpg") 
+                current_all_rounder_folder = "current-all-rounder-rankings"
+                Path(f"data/rankings/{current_all_rounder_folder}").mkdir(parents=True, exist_ok=True)
 
-    def download_img(self, img_url, fp):
-            img_data = requests.get(img_url).content
-            with open(fp, 'wb') as handler:
-                    handler.write(img_data)
+
+                current_all_rounder_image_folder = "current-all-rounder-images"
+                Path(f"data/images/{current_all_rounder_image_folder}").mkdir(parents=True, exist_ok=True)
+
+                #creates folders for images and rankings for all-rounders
+
+
+
+                for all_round_links in current_all_rounder_links[:5]:
+                        self.driver.get(all_round_links)
+                        time.sleep(2)
+                        all_rounder_batting_stats = self.get_bat_stats()
+                        all_rounder_bowling_stats = self.get_bowl_stats()
+                        all_rounder_all_round_stats = self.get_all_round_stats()
+                        self.writing_up_data(current_all_rounder_folder, all_rounder_batting_stats, all_rounder_bowling_stats, all_rounder_all_round_stats)
+                        self.image_scraper(current_all_rounder_image_folder)
+                        break
+
+                self.back_to_original_page()
+
+
+
+        def writing_up_data(self, folder, bat, bowl, all_round):
+
+                        '''
+                        This method dumps the stats in a dictionary in a json file.
+                        It takes the folder as variable so it can be put in the batting, bowling, or all-rounder folder.
+                        
+                        '''
+
+        
+
+                        #player name is scraped for the title of the json file.
+                        player_name = self.driver.find_element(By.XPATH, '//h2[@class="rankings-player-bio__name"]').text.lower().replace(' ', '-')
+                        filename = os.path.join(f"data/rankings/{folder}/" f"{player_name}.json")
+                        #folder is called in the get_{player_role}_info functions
+
+                        with open( filename, 'w') as file:
+
+                                file.write("Test Batting Stats \n\n")
+                                json.dump( bat, file, indent=4)
+                                file.write("\n\nTest Bowling Stats \n\n")
+                                json.dump (bowl, file, indent=4)
+                                file.write("\n\nTest All Rounder Stats\n\n")
+                                json.dump(all_round, file, indent=4)
+                                #indent =4 separates each key value pair on different lines
+                                
+                                
+
+
+        def image_scraper(self, image_folder):
+
+                        '''
+                        
+                        The last two methods scrape the image from the player profile.
+                        And then put it into the respecitive file.
+                        '''
+                        image = self.driver.find_element(By.XPATH, '//img[@class="rankings-player-bio__player-image"]')
+                        img_src = image.get_attribute('src')
+                        player_name = self.driver.find_element(By.XPATH, '//h2[@class="rankings-player-bio__name"]').text.lower().replace(' ', '-')
+
+                        self.download_img(img_src, f"data/images/{image_folder}/{player_name}.jpg") 
+
+        def download_img(self, img_url, fp):
+                img_data = requests.get(img_url).content
+                with open(fp, 'wb') as handler:
+                        handler.write(img_data)
 
 
     
