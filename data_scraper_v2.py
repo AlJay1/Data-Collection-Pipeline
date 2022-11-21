@@ -224,7 +224,7 @@ class DataScraper(PlayerScraper):
                                 batters_all_round_stats = self.get_all_round_stats()
                                 self.writing_up_data(current_batting_folder, batters_batting_stats, batters_bowling_stats, batters_all_round_stats)
                                 self.image_scraper(current_batting_image_folder)
-                                break
+                                
                                 
                 self.back_to_original_page()
                 #back to original page so the next player role rankings can be scraped
@@ -254,7 +254,7 @@ class DataScraper(PlayerScraper):
                         bowlers_all_round_stats = self.get_all_round_stats()
                         self.writing_up_data(current_bowling_folder, bowlers_batting_stats, bowlers_bowling_stats, bowlers_all_round_stats)
                         self.image_scraper(current_bowling_image_folder)
-                        break
+                        
                         
                 self.back_to_original_page()
 
@@ -282,7 +282,7 @@ class DataScraper(PlayerScraper):
                         all_rounder_all_round_stats = self.get_all_round_stats()
                         self.writing_up_data(current_all_rounder_folder, all_rounder_batting_stats, all_rounder_bowling_stats, all_rounder_all_round_stats)
                         self.image_scraper(current_all_rounder_image_folder)
-                        break
+                        
 
                 self.back_to_original_page()
 
