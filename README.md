@@ -9,24 +9,56 @@ Create GitHub repo
 
 In this milestone I chose a website to scrape from. I am very passionate about cricket so I chose https://www.icc-cricket.com/
 
+import player_scraper.py 
 
 # Milestone 3
 
-In this milestone and I created the Scraper Class and made a function to navigate to the correct page. I chose to scrape the data of the current top 100 batters, bowlers, and all-rounders in the test format. Then I made a method to find all of the links to their individual player profiles and click on each one.
+In this milestone I used selenium to created the PLayerScraper Class in the player_scraper.py file.
+
+In the find_correct_page function I navigated from the homepage to the mens test rankings page which is where I would scrape the data from.
+With the click_element function I can just path in the xpath into the function to make it a lot easier
+
+Then with the current_batters, current_bowlers, and current_all_rounder functions, I clicked on the links to reveal the full table of rankings and then return every link for each player in the rankings. This is so each one can be clicked and data can be scraped from each player.
+
+
 
 # Milestone 4
 
-This milestone required me to scrape the relevant data from the page. I scraped each players latest stats, and their highest ever stats with the .text method and used the json.dump method to dump the data into a json file in a specific folder. I also downloaded the image for each player and dumped it into a separate folder.
+This milestone required me to scrape the relevant data from the page.
+I created a child scraper of the PlayerScraper called DataScraper in the data_scraper.py file. I did this to keep things separate and it was a lot easier to follow.
+
+I made a data container I would scrape from in the init method so I would not have to define it in each stat type.
+
+I then made functions for each players first test, batting, bowling and all rounder stats. The for loop iterates through the container, and the .text method scrapes any text available from that section of the page into a list.
+I then return it with ''.join method to create spaces between stats to make it eassier to read.
+
+In the writing_up_data function, it calls the functions that scraps the data, and puts them into a dictionary and dumps it a json file with the json.dumps method.
+
+The get_{player_role}_info tied all of it together by iterating through the lists of links return from the methods created in milestone 3.
+
 
 # Milestone 5 
 
-In this milestone I optimised my code by making it more readable in the json file. I made a dictionary in the scrape_stats function which would make the stats very clear to read and allowed me to get rid of a lot of unnecessary code because I could define the player role and container. I no longer needed 3 different functions for each different player role.
+In this milestone I optimised my code by making the data more user friendly.
+Previously all the date was clumped together and it was very difficult to read, and there were multiple stats on a single line.
+
+I made a new file data_scraper_v2.py to improve this.
+The scrape stats function return each individual stat within the batting, bowling and all rounder containers into a dictionary. This method just scraped the actual ratings and rankings numbers, and were matched to the key:vale pair in the stat_dict dictionary. 
+This made it a lot easier to read unlike before where all the text in a section was scraped. 
+And having the container as a parameter prevented me from having to write a lot of similar code for each player role. In the get_{player_role}_stats function I could just define the container and then call the scrape_stats function.
+Also I created folders for each player role for stats.
+
+In the image_scraper and download_img functions, I downloaded the images with .requests function and then also put them in the correct folder.
+
+
 
 # Milestone 6
-In this milestone I set up a docker image and container for my code to allow it run on any machine with any operating system. I had to add in a headless mode to allow this to work.
+
+In this milestone I set up a docker image and container for my code to allow it run on any machine with any operating system. Docker does not work with a GUI so 
+I had to add in a headless mode with the __options function to allow this to work.
 
 I then pushed it into the docker hub.
 
-
 # Milestone 7
-I created a pipline for the docker container. I created a workflow yaml file and created secrets to allow me to login to docker.
+I created a pipline for the docker container. This would push my docker container to the hub.
+I created a workflow main.yaml file and created secrets with my docker username and passwords to allow me to login to docker.
