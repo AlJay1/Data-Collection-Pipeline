@@ -32,9 +32,9 @@ I made a data container I would scrape from in the init method so I would not ha
 I then made functions for each players first test, batting, bowling and all rounder stats. The for loop iterates through the container, and the .text method scrapes any text available from that section of the page into a list.
 I then return it with ''.join method to create spaces between stats to make it eassier to read.
 
-In the writing_up_data function, it calls the functions that scraps the data, and puts them into a dictionary and dumps it a json file with the json.dumps method.
+In the writing_up_data function, it calls the functions that scrapes the data, and puts them into a dictionary and dumps it a json file with the json.dumps method.
 
-The get_{player_role}_info tied all of it together by iterating through the lists of links return from the methods created in milestone 3.
+The get_{player_role}_info ties all of it together by iterating through the lists of links return from the methods created in milestone 3.
 
 
 # Milestone 5 
@@ -44,12 +44,14 @@ Previously all the date was clumped together and it was very difficult to read, 
 
 I made a new file data_scraper_v2.py to improve this.
 The scrape stats function return each individual stat within the batting, bowling and all rounder containers into a dictionary. This method just scraped the actual ratings and rankings numbers, and were matched to the key:vale pair in the stat_dict dictionary. 
-This made it a lot easier to read unlike before where all the text in a section was scraped. 
-And having the container as a parameter prevented me from having to write a lot of similar code for each player role. In the get_{player_role}_stats function I could just define the container and then call the scrape_stats function.
-Also I created folders for each player role for stats.
 
-In the image_scraper and download_img functions, I downloaded the images with .requests function and then also put them in the correct folder.
+This made it a lot easier to read; previously all the text in the section was scraped so all the stats were clumped together and was not in a visually appealing presentation.
 
+And having the container as a parameter prevented me from having to write a lot of similar code for each player role. In the get_{player_role}_stats function I could just define the container for either batting, bowling, or all rounder, and then I could call the scrape_stats function.
+Also I created folders for each player role if they were not already present for dictionaries to be stored.
+
+In the image_scraper and download_img functions, I downloaded the images with .requests function, then scraped the player name to get the title of the image file
+also put them in the correct folder.
 
 
 # Milestone 6
@@ -60,5 +62,5 @@ I had to add in a headless mode with the __options function to allow this to wor
 I then pushed it into the docker hub.
 
 # Milestone 7
-I created a pipline for the docker container. This would push my docker container to the hub.
-I created a workflow main.yaml file and created secrets with my docker username and passwords to allow me to login to docker.
+Lastly, I created a pipline for the docker container. This would push my docker container to the hub.
+I created a workflow main.yaml file and created secrets in github with my docker username and passwords which would allow me to login to docker to push to the hub.
