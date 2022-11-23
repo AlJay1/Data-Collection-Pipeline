@@ -75,7 +75,7 @@ class PlayerScraper():
                 '''
 
                 self.click_element('//a[contains(@href, "/rankings/mens/player-rankings/test/batting")]')             
-                #clicks to reveal the full batting rankings, only the first can be seen on the previous page.
+                #clicks to reveal the full batting rankings, only the 10 first can be seen on the previous page.
 
                 current_bat = self.driver.find_element(By.XPATH, '//table[@class="table rankings-table"]')
                 #container for batting rankings
