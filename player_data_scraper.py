@@ -50,7 +50,6 @@ class PlayerScraper():
                         elements.click()
                         
 
-
         def find_correct_page(self):
                 '''
                 This function navigates to the correct page. 
@@ -65,7 +64,6 @@ class PlayerScraper():
                 self.click_element('//a[@href="test"]')
                 #clicks on the rankings for the test match format
                 
-
 
         def current_batters(self):
                 '''
@@ -224,12 +222,9 @@ class DataScraper(PlayerScraper):
                         #calls the function to dump the data in a json file and save it in the correct folder which was defined above in this function
                         self.image_scraper(current_batting_image_folder)
                         #calls the function to download the player image and save it in the correct folder which was defined above in this function
-                
-                                
                                 
                 self.back_to_original_page()
                 #back to original page so the next player role rankings can be scraped
-
 
 
         def get_current_bowlers_info(self):
@@ -243,7 +238,6 @@ class DataScraper(PlayerScraper):
                 Path(f"data/images/{current_bowling_image_folder}").mkdir(parents=True, exist_ok=True)
                 #creates folders for images and rankings for bowlers
 
-
                 for bowl_links in current_bowl_links:
                         self.driver.get(bowl_links)
                         #clicks on every link
@@ -255,7 +249,6 @@ class DataScraper(PlayerScraper):
                         self.writing_up_data(current_bowling_folder, bowlers_batting_stats, bowlers_bowling_stats, bowlers_all_round_stats)
                         self.image_scraper(current_bowling_image_folder)
                         #calls the functions to download images and dump data into json into the correct folders defined earlier in the function.
-
                         
                 self.back_to_original_page()
                 #back to original page so the next player role rankings can be scraped
@@ -285,7 +278,6 @@ class DataScraper(PlayerScraper):
                         self.image_scraper(current_all_rounder_image_folder)
                         #calls the functions to download images and dump data into json into the correct folders defined earlier in the function.
         
-
                 self.back_to_original_page()
                 #back to original page so the next player role rankings can be scraped
 
@@ -344,7 +336,6 @@ class DataScraper(PlayerScraper):
 
 
     
-
 if __name__ == "__main__":
     testing = DataScraper()
     testing.get_current_batters_info()
