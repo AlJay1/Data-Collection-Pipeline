@@ -1,7 +1,7 @@
 # AiCore  Data Collection Project
 The goal was to create a data collection pipeline with a web scraping example
 
-To run the scraper, pull the docker image by running ```docker pull aljay1/data_scraper_final``` and then run with ```docker run aljay1/data_scraper_final```
+To run the scraper, pull the docker image by running ```docker pull aljay1/player_data_scraper``` and then run with ```docker run aljay1/player_data_scraper```
 
 
 ## Milestone 1 - Choosing the website
@@ -54,7 +54,7 @@ A Docker image was setup to allow the scraper to run on any machine with any ope
 Docker does not work with a GUI so a headless mode was implemented with the ```__options``` function to allow this to work.
 
 The image was pushed to the Docker hub with the following command:
-```docker push aljay1/data_scraper_final```
+```docker push aljay1/player_data_scraper```
 
 
 ## Milestone 6 - Setting up a CI/CD pipline 
